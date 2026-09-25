@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ignore raw dataset and zipped dataset
+recipes_w_search_terms.csv
+*.zip
