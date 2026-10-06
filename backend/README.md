@@ -4,7 +4,9 @@ This is the backend server for the Recipe Finder app. It connects to MySQL and p
 
 ## How to Run Backend
 
-Follow these steps in terminal inside `backend` folder:
+**Make sure to set up the database in MySQL Workbench first before setting up the backend. Refer to the `README.md` file inside `database/` folder for instructions**.  
+
+Once database is set up, follow these steps in terminal inside `backend/` folder:
 
 ### 1. Create Virtual Environment
 
@@ -33,7 +35,7 @@ pip install flask flask-cors mysql-connector-python python-dotenv
 
 ### 4. Create .env File
 
-Create file named `.env` inside `backend` folder with the following:
+Create file named `.env` inside `backend/` folder with the following:
 ```
 DB_HOST=localhost
 DB_USER=root
