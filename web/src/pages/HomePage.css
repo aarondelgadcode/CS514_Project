@@ -1,0 +1,101 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+	min-height: 93vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.home-page .ant-pagination {
+  margin-top: auto;
+  padding-top: 3%;
+  display: flex;
+  justify-content: center;
+}
+
+.home-page .ant-pagination-item {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+.home-page .ant-pagination-item a {
+  color: var(--text);
+}
+
+/* Hover */
+.home-page .ant-pagination-item:hover {
+  border-color: var(--accent);
+}
+
+.home-page .ant-pagination-item:hover a {
+  color: var(--accent);
+}
+
+/* Current page */
+.home-page .ant-pagination-item-active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.home-page .ant-pagination-item-active a {
+  color: white;
+}
+
+
+/* Previous and Next buttons */
+.home-page .ant-pagination-prev .ant-pagination-item-link,
+.home-page .ant-pagination-next .ant-pagination-item-link {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Previous and Next hover */
+.home-page .ant-pagination-prev:hover .ant-pagination-item-link,
+.home-page .ant-pagination-next:hover .ant-pagination-item-link {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Disabled Previous and Next */
+.home-page .ant-pagination-disabled .ant-pagination-item-link {
+  color: var(--border);
+  border-color: var(--border);
+}
+
+/* Display 2 cards per row for medium device */
+@media (max-width: 1024px) {
+  .home-page {
+    padding: 20px;
+  }
+
+  .recipe-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+/* Display 1 card per row for small device */
+@media (max-width: 600px) {
+  .home-page {
+    padding: 12px;
+  }
+
+  .recipe-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .home-page .ant-pagination {
+    padding-top: 24px;
+  }
+}
