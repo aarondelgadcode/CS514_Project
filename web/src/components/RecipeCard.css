@@ -1,0 +1,36 @@
+.recipe-card {
+	flex: 1 1 250px;
+	width: 100%;
+	background: var(--bg);
+	border: 1px solid var(--card-border);
+	box-shadow: var(--shadow);
+	padding: 2%;
+}
+
+.recipe-card .ant-card-head-title {
+	color: var(--text-h);
+	font-size: 1.1rem;
+}
+
+.recipe-card .ant-card-body {
+	color: var(--text);
+}
+
+.recipe-card h2 {
+	color: var(--text-h);
+	font-size: 1.1rem;
+	margin-top: 0;
+}
+
+.recipe-card ul {
+	padding-left: 3%;
+}
+
+.recipe-card li {
+	margin-bottom: 2%;
+}
+
+.recipe-card-link {
+	text-decoration: none;
+	color: inherit;
+}
