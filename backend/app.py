@@ -38,7 +38,7 @@ def get_recipes():
         search_query = request.args.get("search", "").strip()
         if search_query:
             # Query database to search for name, tags, and search terms of recipes
-            sql_query = "SELECT * FROM recipes WHERE name LIKE %s OR tags LIKE %s OR search_terms LIKE %s LIMIT 50"
+            sql_query = "SELECT * FROM recipes WHERE name LIKE %s OR ingredients LIKE %s OR tags LIKE %s OR search_terms LIKE %s LIMIT 50"
             search_pattern = f"%{search_query}%"
             cursor.execute(sql_query, (search_pattern, search_pattern, search_pattern))
         else:
