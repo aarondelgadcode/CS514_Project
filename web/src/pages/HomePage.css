@@ -9,6 +9,12 @@
   padding: 24px;
 }
 
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .recipe-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -88,6 +94,11 @@
 @media (max-width: 600px) {
   .home-page {
     padding: 12px;
+  }
+
+  .home-header {
+    display: block;
+    padding-bottom: 3%;
   }
 
   .recipe-grid {
