@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from 'react';
 import { Pagination } from "antd";
 import "./HomePage.css";
+import { fetchRecipes } from "../api/recipes";
 
 import RecipeCard from "../components/RecipeCard";
 import SearchBar from "../components/SearchBar";
@@ -14,23 +15,7 @@ export default function HomePage() {
 
 	const { data: recipes, isLoading, isError } = useQuery({
 		queryKey: ["recipes", searchTerm],
-		queryFn: async () => {
-			const params = new URLSearchParams();
-
-			if (searchTerm) {
-				params.set("search", searchTerm);
-			}
-
-			const response = await fetch(
-				`http://127.0.0.1:5000/api/recipes?${params.toString()}`
-			);
-
-			if (!response.ok) {
-				throw new Error("Failed to fetch recipes");
-			}
-
-			return response.json();
-		},
+		queryFn: () => fetchRecipes(searchTerm),
 	});
 
 	const handleSearch = (value) => {
@@ -40,8 +25,6 @@ export default function HomePage() {
 		setSearchTerm(value);
 	};
 
-	console.log(recipes);
-
 	return (
 		<div className="home-page">
 			<div className="home-header">
@@ -49,7 +32,6 @@ export default function HomePage() {
 
 				<SearchBar onSearch={handleSearch} />
 			</div>
-
 
 			{isError && <p>Unable to load recipes.</p>}
 

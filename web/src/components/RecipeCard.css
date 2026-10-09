@@ -29,3 +29,8 @@
 .recipe-card li {
 	margin-bottom: 2%;
 }
+
+.recipe-card-link {
+	text-decoration: none;
+	color: inherit;
+}
