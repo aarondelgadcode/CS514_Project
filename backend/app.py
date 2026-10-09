@@ -3,6 +3,7 @@ from flask_cors import CORS
 import mysql.connector
 from db import get_db_connection
 import ast
+import json
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -10,26 +11,39 @@ app = Flask(__name__)
 # Enable CORS for React requests to backend
 CORS(app)
 
-# Converts lists from MySQL into Python lists
+# Converts lists from MySQL into Python lists for React
 def parse_db_field(value):
     if not value:
         return []
     if isinstance(value, str):
+        stripped = value.strip()
+        # Try standard JSON parsing first
+        try:
+            return json.loads(stripped)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+        # Try Python literal evaluation for sets/tuples stored as strings
         try:
             parsed = ast.literal_eval(value)
-            return list(parsed) if isinstance (parsed, (list, set, tuple)) else value
+            if isinstance(parsed, (list, set, tuple)):
+                return list(parsed)
+            return [parsed]
         except (ValueError, SyntaxError):
-            return value
-    return value
+            return [stripped]
+
+    return value if isinstance(value, list) else [value]
 
 # Verify backend is working
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Recipe Finder API is running"})
 
-# Fetch recipes from database
+# Fetch recipes from database with optional searching
 @app.route("/api/recipes", methods=["GET"])
 def get_recipes():
+    connection = None
+    cursor = None
     try:
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
@@ -37,10 +51,10 @@ def get_recipes():
         # Get optional search query parameter from url (ex. /api/recipes?search=chicken)
         search_query = request.args.get("search", "").strip()
         if search_query:
-            # Query database to search for name, tags, and search terms of recipes
+            # Query database to search for name, ingredients, tags, and search terms of recipes
             sql_query = "SELECT * FROM recipes WHERE name LIKE %s OR ingredients LIKE %s OR tags LIKE %s OR search_terms LIKE %s LIMIT 50"
             search_pattern = f"%{search_query}%"
-            cursor.execute(sql_query, (search_pattern, search_pattern, search_pattern))
+            cursor.execute(sql_query, (search_pattern, search_pattern, search_pattern, search_pattern))
         else:
             # Default query if no search parameter provided
             # Gets first 50 recipes from database
@@ -58,17 +72,21 @@ def get_recipes():
 
         return jsonify(recipes), 200
     except mysql.connector.Error as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Database Error: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Server Error: {str(e)}"}), 500
     # Close database connections
     finally:
-        if "cursor" in locals():
+        if cursor:
             cursor.close()
-        if "connection" in locals() and connection.is_connected():
+        if connection and connection.is_connected():
             connection.close()
 
 # Fetch single recipe from database
 @app.route("/api/recipes/<int:recipe_id>", methods=["GET"])
 def get_recipe_by_id(recipe_id):
+    connection = None
+    cursor = None
     try:
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
@@ -90,12 +108,14 @@ def get_recipe_by_id(recipe_id):
         
         return jsonify(recipe), 200
     except mysql.connector.Error as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Database Error: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Server Error: {str(e)}"}), 500
     # Close database connections
     finally:
-        if "cursor" in locals():
+        if cursor:
             cursor.close()
-        if "connection" in locals() and connection.is_connected():
+        if connection and connection.is_connected():
             connection.close()
 
 # Run server on http://localhost:5000
