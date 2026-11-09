@@ -13,19 +13,25 @@ CORS(app)
 
 # Converts lists from MySQL into Python lists for React
 def parse_db_field(value):
-    if not value:
+    if value is None or value == "":
         return []
     if isinstance(value, str):
         stripped = value.strip()
+        if not stripped:
+            return []
+        
         # Try standard JSON parsing first
         try:
-            return json.loads(stripped)
+            parsed = json.loads(stripped)
+            if isinstance(parsed, list):
+                return parsed
+            return [parsed]
         except (json.JSONDecodeError, TypeError):
             pass
 
         # Try Python literal evaluation for sets/tuples stored as strings
         try:
-            parsed = ast.literal_eval(value)
+            parsed = ast.literal_eval(stripped)
             if isinstance(parsed, (list, set, tuple)):
                 return list(parsed)
             return [parsed]
@@ -50,16 +56,28 @@ def get_recipes():
 
         # Get optional search query parameter from url (ex. /api/recipes?search=chicken)
         search_query = request.args.get("search", "").strip()
+        tag_query = request.args.get("tags", "").strip() or request.args.get("tag", "").strip()
+
+        # Build dynamic SQL query
+        sql_query = "SELECT * FROM recipes WHERE 1=1"
+        params = []
+
         if search_query:
-            # Query database to search for name, ingredients, tags, and search terms of recipes
-            sql_query = "SELECT * FROM recipes WHERE name LIKE %s OR ingredients LIKE %s OR tags LIKE %s OR search_terms LIKE %s LIMIT 50"
+            sql_query += " AND (name LIKE %s OR ingredients LIKE %s OR tags LIKE %s OR search_terms LIKE %s)"
             search_pattern = f"%{search_query}%"
-            cursor.execute(sql_query, (search_pattern, search_pattern, search_pattern, search_pattern))
-        else:
-            # Default query if no search parameter provided
-            # Gets first 50 recipes from database
-            cursor.execute("SELECT * FROM recipes LIMIT 50")
-        
+            params.append(search_pattern)
+            params.append(search_pattern)
+            params.append(search_pattern)
+            params.append(search_pattern)
+
+        if tag_query:
+            sql_query += " AND tags LIKE %s"
+            tag_pattern = f"%{tag_query}%"
+            params.append(tag_pattern)
+
+        sql_query += " LIMIT 50"
+
+        cursor.execute(sql_query, tuple(params))
         recipes = cursor.fetchall()
 
         # Clean data from MySQL
