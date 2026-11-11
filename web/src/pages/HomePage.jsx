@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pagination } from "antd";
 import "./HomePage.css";
 import { fetchRecipes } from "../api/recipes";
-
+import NavBar from "../components/NavBar";
 import RecipeCard from "../components/RecipeCard";
 import SearchBar from "../components/SearchBar";
 
@@ -26,10 +26,11 @@ export default function HomePage() {
 	};
 
 	return (
+		
 		<div className="home-page">
+			<NavBar/>
 			<div className="home-header">
 				<h1>Recipes</h1>
-
 				<SearchBar onSearch={handleSearch} />
 			</div>
 
