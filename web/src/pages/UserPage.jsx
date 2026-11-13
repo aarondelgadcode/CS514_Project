@@ -5,8 +5,10 @@ export default function UserPage() {
 	return (
 		<div className="user-page">
 			<NavBar/>
-			<div className="user-header">
-				<h3>User Page</h3>
+			<h1>User Page</h1>
+			<div className="userpage-header">
+				<h3>Recent Posts</h3>
+				<h3>Saved Recipes</h3>
 			</div>
 		</div>
 	)
